@@ -1,9 +1,5 @@
 import string
 import yaml
-from prompt_template_unit import PromptTemplateUnit
-
-# from helpers import load_yaml_file
-# from my_ai_tools.preprompt import Preprompt
 from prompt_template_unit  import PromptTemplateUnit
 
 # from indented_logger import IndentedLogger
@@ -11,7 +7,6 @@ from prompt_template_unit  import PromptTemplateUnit
 # logger_setup = IndentedLogger(name='prepromptbuilder', level=logging.INFO, include_func=True)
 
 l= []
-
 
 
 class Bin():
@@ -88,6 +83,7 @@ class PromptTemplateAssembler:
 
         yaml_data = self.load_yaml_file(yaml_file_path)
         self.unit_objects = self.create_units_from_skeletons(yaml_data)
+        print( len(self.unit_objects), "prompt template units loaded")
 
     def bring_units(self, list_of_unit_names):
         p = []
@@ -115,7 +111,7 @@ class PromptTemplateAssembler:
         for e in list_of_unit_names:
             self.bin.add(e)
 
-    def craft(self, placeholder_dict, units=None, ):
+    def craft(self, units, placeholder_dict=None):
         if units:
             self.add_units_to_bin(units)
         template_block = self.merge_simple(self.bin.storage, placeholder_dict)
@@ -410,128 +406,30 @@ class PromptTemplateAssembler:
 
 def main():
 
-    pb = PromptTemplateAssembler('prompts.yaml')
+    ptos = PromptTemplateAssembler('prompts.yaml')
 
-    # Use case 1, Simply combine your prompt template unit
+    order = ["business_documentation", "user_input", "answer_style"]
 
-    order = ["pn", "manuf", "page_content", "summarize_page_using_pn_manuf"]
-
-    r = pb.craft(preprompts=order)
-
-    print("Use Case 1 [Simple Craft] ")
-    print(r)
-
-    # Use case 2,
-    # Combine your prompt template unit And also provide a dict which holds the placeholder values.
-    # This wont fill the placeholder values, it simplly checks if placeholder exists or not,
-    # if placeholder does not exist for a value it is not included in crafting process.
-    # This is really useful when dont know which information will be available during prompting and it saves us
-    # from lots of if else statements.
-
-    order = ["pn", "manuf", "page_content", "summarize_page_using_pn_manuf"]
-
-    placeholder_dict = {
-        "project_desc": "This project is about creating an AI-based system to automate data analysis.",
-        "structure": "The system consists of three main components: data ingestion, model training, and result visualization.",
-        "step_guide": "The current step is about defining the data ingestion process and preparing the datasets for training.",}
-
-    r = pb.craft(placeholder_dict=placeholder_dict,  preprompts=order)
-    print("Use Case 2 [Simple Craft with placeholder  check] ")
-    print(r)
-
-
-    # Use case 3
-    # This use case is when you store your prompt units under a task based category and simply craft them together
-
-
-    pb.add_all_units_to_bin()
-
-
-    placeholder_dict = {
-        "project_desc": "This project is about creating an AI-based system to automate data analysis.",
-        "structure": "The system consists of three main components: data ingestion, model training, and result visualization.",
-        "step_guide": "The current step is about defining the data ingestion process and preparing the datasets for training.",
-        "all_steps_info": "Other steps include model selection, training, and evaluation.",
-        "step_info": "In this step, we focus on identifying the relevant datasets and cleaning them for optimal performance.",
-        "importance_with_respect_to_project_description": "Data ingestion is critical as it ensures the quality and relevance of the data used for training models, directly impacting the project's success.",
-        "purpose_in_terms_of_what_it_defines": "The purpose of this step is to define the scope and methods for ingesting and preprocessing data.",
-        "purpose_in_terms_of_which_documentation_path_it_leads": "This step will lead to documentation on data preparation methods, which is a crucial part of the overall project workflow.",
-        "what_details_should_not_include": "This step should not include details about model training, which is handled in a later phase.",
-        "about_what_to_be_innovative": "Innovative approaches should be taken when automating the dataset preparation process.",
-        "about_what_to_give_extra_details": "Extra details should be given on how to handle missing or corrupted data during ingestion.",
-        "about_what_should_not_break_established_flow": "The data ingestion process should not interrupt the pipeline's established flow between data sources and storage.",
-        "what_to_check_if_content_is_completed": "Ensure that all necessary datasets have been identified, ingested, and cleaned properly before moving to the next phase.",
-        "immutable_references": "Database table names, such as 'raw_data' and 'cleaned_data', should remain consistent across steps."
+    filtered_data= { "business_documentationn": "asdfjasdf",
+                 "user_input": "userrrrsss",
+                 "cccc" :" adsfasdf"
     }
+    prompt_template_1 = ptos.craft(order)
+    # template assembler based prompt orchestration
+    # prompt_templating_system
 
-    r=pb.craft_question("context_prompts", placeholder_dict)
-    print(r)
-    r = pb.craft_question("context_prompts", placeholder_dict)
-    print(r)
+    # from langchain_core.prompts import PromptTemplate
+    from langchain.prompts import PromptTemplate
 
+    prompt = PromptTemplate.from_template(prompt_template_1)
+    formatted_prompt = prompt.format(**filtered_data)
 
+    print(prompt_template_1)
 
+    print("-------")
 
+    print(formatted_prompt)
 
-    # order = ["pn", "manuf", "page_content", "summarize_page_using_pn_manuf"]
-    #
-    # # placeholder_dict = { "pn": "asdfv",  "manuf": "1234", "page_content": "99999", }
-    # r = pb.craft(placeholder_dict, preprompts=order)
-    # print(r)
-    # print("  ")
-    #
-    # def main():
-    #     pb = PromptTemplateAssembler('prompts.yaml')
-    #
-    #     # Use Case 1: Simple Craft without placeholders
-    #     order = ["pn", "manuf", "page_content", "summarize_page_using_pn_manuf"]
-    #     try:
-    #         r = pb.craft(units=order)
-    #         print("Use Case 1 [Simple Craft] ")
-    #         print(r)
-    #     except Exception as e:
-    #         pb.logger.error(f"Use Case 1 failed: {e}")
-    #
-    #     # Use Case 2: Simple Craft with placeholder check
-    #     placeholder_dict = {
-    #         "project_desc": "This project is about creating an AI-based system to automate data analysis.",
-    #         "structure": "The system consists of three main components: data ingestion, model training, and result visualization.",
-    #         "step_guide": "The current step is about defining the data ingestion process and preparing the datasets for training.",
-    #     }
-    #
-    #     try:
-    #         r = pb.craft(placeholder_dict=placeholder_dict, units=order)
-    #         print("Use Case 2 [Simple Craft with Placeholder Check] ")
-    #         print(r)
-    #     except Exception as e:
-    #         pb.logger.error(f"Use Case 2 failed: {e}")
-    #
-    #     # Use Case 3: Crafting with Categories and Questions
-    #     pb.add_all_units_to_bin()
-    #
-    #     try:
-    #         r, question = pb.craft_question_using_category(
-    #             data_for_placeholders=placeholder_dict,
-    #             question_category="context_prompts",
-    #             supporter_category=None  # Replace with actual category if needed
-    #         )
-    #         print("Use Case 3 [Craft Question Using Category] ")
-    #         print(r)
-    #     except Exception as e:
-    #         pb.logger.error(f"Use Case 3 failed: {e}")
-    #
-    #     # Optional: Create a dynamic prompt
-    #     try:
-    #         pb.dynamic_prompt_maker("dynamic_prompt_1",
-    #                                 "This is a dynamically created prompt with project description: {project_desc}.")
-    #         dynamic_prompt = pb.craft(units=["dynamic_prompt_1"], placeholder_dict=placeholder_dict)
-    #         print("Dynamic Prompt: ")
-    #         print(dynamic_prompt)
-    #     except Exception as e:
-    #         pb.logger.error(f"Dynamic Prompt creation failed: {e}")
-    #
-    # if __name__ == '__main__':
-    #     main()
 
 
 if __name__ == '__main__':
