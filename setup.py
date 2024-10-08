@@ -4,8 +4,8 @@ import subprocess
 import os
 
 setup(
-    name='prompt_template_assembler',  # Package name
-    version='0.0.1',  # Version of your package
+    name='proteas',  # Package name
+    version='0.0.3',  # Version of your package
     author='Enes Kuzucu',  # Your name
 
     description='A module to create prompt templates dynamically',  # Short description

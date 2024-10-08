@@ -8,7 +8,6 @@ from prompt_template_unit  import PromptTemplateUnit
 
 l= []
 
-
 class Bin():
     def __init__(self):
         self.storage= []
@@ -46,7 +45,7 @@ class Bin():
 
 # PTOS prompt_template_orchestration_system
 
-class PromptTemplateAssembler:
+class Proteas:
     def __init__(self, yaml_path=None, logger=None):
         """Initialize the PromptManager without any specific attributes."""
         self.bin= Bin()
@@ -406,15 +405,15 @@ class PromptTemplateAssembler:
 
 def main():
 
-    ptos = PromptTemplateAssembler('prompts.yaml')
+    proteas = Proteas('prompts.yaml')
 
     order = ["business_documentation", "user_input", "answer_style"]
 
-    filtered_data= { "business_documentationn": "asdfjasdf",
+    filtered_data= { "business_documentation": "asdfjasdf",
                  "user_input": "userrrrsss",
                  "cccc" :" adsfasdf"
     }
-    prompt_template_1 = ptos.craft(order)
+    prompt_template_1 = proteas.craft(order)
     # template assembler based prompt orchestration
     # prompt_templating_system
 
